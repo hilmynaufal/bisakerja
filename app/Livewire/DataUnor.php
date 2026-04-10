@@ -164,8 +164,8 @@ class DataUnor extends Component
         $this->jenis_unor = $array->jenis_unor;
         $this->jenjang_jabatan = $array->jenjang_jabatan;
         $this->jabatan_prioritas = $array->jabatan_prioritas;
-        $this->is_prioritas_nasional = $array->is_prioritas_nasional;
-        $this->is_prioritas_instansi = $array->is_prioritas_instansi;
+        $this->is_prioritas_nasional = (bool) $array->is_prioritas_nasional;
+        $this->is_prioritas_instansi = (bool) $array->is_prioritas_instansi;
         $this->rumpun_jabatan = $array->rumpun_jabatan;
         $this->lokasi = $array->lokasi;
         $this->unor_atasan_struktural = $array->unor_atasan_struktural;
@@ -201,8 +201,8 @@ class DataUnor extends Component
         $this->jenis_unor = $array->jenis_unor;
         $this->jenjang_jabatan = $array->jenjang_jabatan;
         $this->jabatan_prioritas = $array->jabatan_prioritas;
-        $this->is_prioritas_nasional = $array->is_prioritas_nasional;
-        $this->is_prioritas_instansi = $array->is_prioritas_instansi;
+        $this->is_prioritas_nasional = (bool) $array->is_prioritas_nasional;
+        $this->is_prioritas_instansi = (bool) $array->is_prioritas_instansi;
         $this->rumpun_jabatan = $array->rumpun_jabatan;
         $this->lokasi = $array->lokasi;
         $this->unor_atasan_struktural = $array->unor_atasan_struktural;
