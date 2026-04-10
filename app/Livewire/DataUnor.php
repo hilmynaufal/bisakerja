@@ -19,6 +19,8 @@ class DataUnor extends Component
     public $jenis_unor;
     public $jenjang_jabatan;
     public $jabatan_prioritas;
+    public $is_prioritas_nasional;
+    public $is_prioritas_instansi;
     public $rumpun_jabatan;
     public $lokasi;
     public $unor_atasan_struktural;
@@ -63,6 +65,8 @@ class DataUnor extends Component
         'jenis_unor' => 'nullable|string',
         'jenjang_jabatan' => 'nullable|string',
         'jabatan_prioritas' => 'nullable|string',
+        'is_prioritas_nasional' => 'nullable|boolean',
+        'is_prioritas_instansi' => 'nullable|boolean',
         'rumpun_jabatan' => 'nullable|string',
         'lokasi' => 'nullable|string',
         'unor_atasan_struktural' => 'nullable|string',
@@ -90,6 +94,8 @@ class DataUnor extends Component
             'jenis_unor' => $this->jenis_unor,
             'jenjang_jabatan' => $this->jenjang_jabatan,
             'jabatan_prioritas' => $this->jabatan_prioritas,
+            'is_prioritas_nasional' => $this->is_prioritas_nasional,
+            'is_prioritas_instansi' => $this->is_prioritas_instansi,
             'rumpun_jabatan' => $this->rumpun_jabatan,
             'lokasi' => $this->lokasi,
             'unor_atasan_struktural' => $this->unor_atasan_struktural,
@@ -158,6 +164,8 @@ class DataUnor extends Component
         $this->jenis_unor = $array->jenis_unor;
         $this->jenjang_jabatan = $array->jenjang_jabatan;
         $this->jabatan_prioritas = $array->jabatan_prioritas;
+        $this->is_prioritas_nasional = $array->is_prioritas_nasional;
+        $this->is_prioritas_instansi = $array->is_prioritas_instansi;
         $this->rumpun_jabatan = $array->rumpun_jabatan;
         $this->lokasi = $array->lokasi;
         $this->unor_atasan_struktural = $array->unor_atasan_struktural;
@@ -193,6 +201,8 @@ class DataUnor extends Component
         $this->jenis_unor = $array->jenis_unor;
         $this->jenjang_jabatan = $array->jenjang_jabatan;
         $this->jabatan_prioritas = $array->jabatan_prioritas;
+        $this->is_prioritas_nasional = $array->is_prioritas_nasional;
+        $this->is_prioritas_instansi = $array->is_prioritas_instansi;
         $this->rumpun_jabatan = $array->rumpun_jabatan;
         $this->lokasi = $array->lokasi;
         $this->unor_atasan_struktural = $array->unor_atasan_struktural;

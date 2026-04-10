@@ -74,10 +74,10 @@
             <div class="block px-2 mt-2 mb-3 text-sm"><span class="text-base text-bkn-blue"> Jabatan Prioritas
                 </span>
                 <div class="flex">
-                    <div class="flex flex-row w-1/4 mt-1"><input disabled="" inputclass="[object Object]"
+                    <div class="flex flex-row w-1/4 mt-1"><input wire:model="is_prioritas_nasional"
                             type="checkbox" class="block w-4 h-4 bg-white border rounded"><label class="px-2 text-sm">
                             J.Prioritas Nasional </label></div>
-                    <div class="flex flex-row w-1/4 mt-1"><input disabled="" inputclass="[object Object]"
+                    <div class="flex flex-row w-1/4 mt-1"><input wire:model="is_prioritas_instansi"
                             type="checkbox" class="block w-4 h-4 bg-white border rounded"><label class="px-2 text-sm">
                             J.Prioritas Instansi </label></div>
                 </div>
