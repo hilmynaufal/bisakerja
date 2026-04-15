@@ -15,6 +15,7 @@ class DataJabatan extends Component
     public $input_nama_pendidikan = [];
     public $nama_pendidikan;
     public $id_jabatan;
+    public $kode_jabatan;
     public $nama_jabatan;
     public $jenis_jabatan;
     public $jpt_madya;
@@ -46,6 +47,7 @@ class DataJabatan extends Component
         // $this->refJabatan = $array2;
 
         $this->id_jabatan = $array->id_jabatan;
+        $this->kode_jabatan = $array->kode_jabatan ?? '';
         $this->nama_jabatan = $array->nama_jabatan;
         $this->searchNamaJabatan = $array->nama_jabatan;
         
@@ -72,7 +74,7 @@ class DataJabatan extends Component
             'nama_pendidikan' => $nama_pendidikan,
         ]);
 
-        session()->flash('message', 'Tanggung Jawab berhasil diupdate!');
+        session()->flash('message', 'Pendidikan berhasil diupdate!');
 
         LivewireAlert::title('Berhasil!')
             ->text('Data Berhasil diupdate.')
@@ -99,6 +101,7 @@ class DataJabatan extends Component
 
 
         $this->id_jabatan = $array->id_jabatan;
+        $this->kode_jabatan = $array->kode_jabatan ?? '';
         $this->nama_jabatan = $array->nama_jabatan;
         $this->jenis_jabatan = $array->jenis_jabatan;
         $this->jpt_madya = $array->jpt_madya;
@@ -165,6 +168,7 @@ class DataJabatan extends Component
 
         DB::table('data_jabatan')->where('id_jabatan', $this->id_jabatan)->update([
             'nama_jabatan' => $this->searchNamaJabatan,
+            'kode_jabatan' => $this->kode_jabatan,
             'jenis_jabatan' => $this->jenis_jabatan,
             'jpt_madya' => $this->jpt_madya,
             'administrator' => $this->administrator,
@@ -172,7 +176,7 @@ class DataJabatan extends Component
             'pengawas' => $this->pengawas,
             'ikhtisar_jabatan' => $this->ikhtisar_jabatan,
             'syarat_jabatan' => $this->syarat_jabatan,
-            'pendidikan' => $this->pendidikan,
+            'pendidikan' => $this->searchPendidikanMinimum,
             'diklat' => $this->diklat,
             'pengalaman' => $this->pengalaman,
         ]);
@@ -208,7 +212,7 @@ class DataJabatan extends Component
             ->position('top-end')
             ->show();
 
-        session()->flash('message', 'Post berhasil diperbarui!');
+        session()->flash('message', 'Data Jabatan berhasil diperbarui!');
     }
 
     public function hapusPendidikan($id)
