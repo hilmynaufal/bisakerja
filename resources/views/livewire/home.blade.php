@@ -24,8 +24,7 @@
                                                                         class="w-auto h-10"
                                                                         src="{{ asset('logo.png') }}" alt=""></a><span
                                                                 class="hidden text-2xl font-bold md:block text-bkn-blue">
-                                                                BASIS INFORMASI SISTEM ANALISIS KEBUTUHAN DAN EVALUASI
-                                                                JABATAN (BISA KERJA)
+                                                               BASIS INFORMASI SISTEM ANALISIS JABATAN DAN ANALISIS BEBAN KERJA (BISA KERJA)
                                                         </span>
                                                 </div>
                                                 <ul class="items-center hidden mr-6 space-x-6 md:flex">
