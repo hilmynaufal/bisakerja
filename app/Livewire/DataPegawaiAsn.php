@@ -38,6 +38,48 @@ class DataPegawaiAsn extends Component
         $this->updateQuotaInfo();
     }
 
+    /**
+     * Ambil bearer token dari SIMPEL (POST /token).
+     */
+    private function getSimpelToken(): string
+    {
+        $baseUrl = rtrim(config('services.simpel.base_url'), '/');
+
+        $response = Http::timeout(60)
+            ->connectTimeout(30)
+            ->acceptJson()
+            ->asMultipart()
+            ->post("{$baseUrl}/token", [
+                ['name' => 'username', 'contents' => (string) config('services.simpel.username')],
+                ['name' => 'password', 'contents' => (string) config('services.simpel.password')],
+            ]);
+
+        $response->throw();
+
+        $json = $response->json();
+        $token = $json['token'] ?? $json['access_token'] ?? $json['data']['token'] ?? $json['data']['access_token'] ?? null;
+
+        if (empty($token)) {
+            throw new \RuntimeException('Token SIMPEL tidak ditemukan pada response.');
+        }
+
+        return $token;
+    }
+
+    /**
+     * Ambil data pegawai aktif dari SIMPEL (POST /e-personal/pegawai).
+     */
+    private function requestPegawaiAktif(string $nip)
+    {
+        $baseUrl = rtrim(config('services.simpel.base_url'), '/');
+
+        return Http::timeout(120)
+            ->connectTimeout(30)
+            ->withToken($this->getSimpelToken())
+            ->acceptJson()
+            ->post("{$baseUrl}/e-personal/pegawai", ['nip' => $nip]);
+    }
+
     public function testApiConnection()
     {
         try {
@@ -45,30 +87,14 @@ class DataPegawaiAsn extends Component
             ini_set('max_execution_time', 300); // 5 menit
             ini_set('default_socket_timeout', 120); // 2 menit
 
-            $response = Http::timeout(30)
-                ->withHeaders([
-                    'Accept' => 'application/json',
-                    'User-Agent' => 'Laravel/10.0'
-                ])
-                ->post("https://hirumi.xyz/bisa_kerja_api/api/get_pegawai_data", [
-                    'nip' => $this->nip_baru
-                ]);
+            $this->getSimpelToken();
 
-            if ($response->successful()) {
-                LivewireAlert::title('Berhasil!')
-                    ->text('Koneksi ke API berhasil. Server API dapat diakses.')
-                    ->success()
-                    ->toast()
-                    ->position('top-end')
-                    ->show();
-            } else {
-                LivewireAlert::title('Error!')
-                    ->text('Koneksi ke API gagal. Status: ' . $response->status())
-                    ->error()
-                    ->toast()
-                    ->position('top-end')
-                    ->show();
-            }
+            LivewireAlert::title('Berhasil!')
+                ->text('Koneksi ke API SIMPEL berhasil. Token berhasil diambil.')
+                ->success()
+                ->toast()
+                ->position('top-end')
+                ->show();
         } catch (\Exception $e) {
             LivewireAlert::title('Error!')
                 ->text('Tidak dapat terhubung ke API: ' . $e->getMessage())
@@ -151,30 +177,29 @@ class DataPegawaiAsn extends Component
         $this->isLoading = true;
 
         try {
-            // Konfigurasi HTTP client dengan timeout yang lebih panjang
-            $response = Http::timeout(120) // 2 menit timeout
-                ->connectTimeout(30) // 30 detik untuk koneksi awal
-                ->withHeaders([
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json',
-                    'User-Agent' => 'Laravel/10.0',
-                    'Authorization' => 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvc2ltcGVsYmtwc2RtLmJhbmR1bmdrYWIuZ28uaWRcL2FwaVwvdjFcL3Rva2VuIiwiaWF0IjoxNjk5NjEzODE1LCJuYmYiOjE2OTk2MTM4MTUsImp0aSI6InNyaVdudlltcVFxSVhnQXQiLCJzdWIiOjEsInBydiI6ImU0OTBjNTJiZmUzZjUwZTAyOWUyMzhkMTQwOWFkMzc3ODg0N2ExODAifQ.xiK0pYLwqyZ56dnMmRZGfJN42pcMoFolZwMy_WbsMJw'
-                ])
-                ->retry(3, 1000) // Retry 3 kali dengan delay 1 detik
-                ->post("https://hirumi.xyz/bisa_kerja_api/api/get_pegawai_data", [
-                    'nip' => $this->nip_baru
-                ]);
-
-            //dd($response);
+            $response = $this->requestPegawaiAktif($this->nip_baru);
 
             if ($response->successful()) {
-                $data = $response->json();
+                $json = $response->json();
+                // Response berbentuk paginasi: data.data[0] adalah pegawai
+                $data = $json['data']['data'][0] ?? null;
+
+                if (!$data) {
+                    LivewireAlert::title('Error!')
+                        ->text('NIP tidak ditemukan dalam database API.')
+                        ->error()
+                        ->toast()
+                        ->position('top-end')
+                        ->show();
+                    $this->isLoading = false;
+                    return;
+                }
 
                 // Mengisi form dengan data dari API
-                $this->nama = $data['data']['nama'] ?? '';
+                $this->nama = $data['nama'] ?? '';
                 $this->kedudukan_hukum = 'Aktif';
-                $this->golongan = $data['data']['golongan'] ?? '';
-                $this->jabatan = $data['data']['jabatan'] ?? '';
+                $this->golongan = $data['golongan'] ?? '';
+                $this->jabatan = $data['jabatan'] ?? '';
 
                 LivewireAlert::title('Berhasil!')
                     ->text("Data pegawai {$this->nama} (NIP: {$this->nip_baru}) berhasil diambil dari API. Silakan periksa dan simpan data.")
@@ -214,8 +239,6 @@ class DataPegawaiAsn extends Component
                 'code' => $errorCode,
                 'message' => $errorText
             ]);
-
-            dd($errorText);
 
             if (str_contains($errorText, 'cURL error 28')) {
                 $errorMessage = 'Koneksi ke API timeout (120 detik). Silakan coba lagi atau hubungi administrator.';
